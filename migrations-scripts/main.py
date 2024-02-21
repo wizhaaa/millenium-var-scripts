@@ -37,22 +37,29 @@ try:
                 )
                 print(f"pnl checkpoint - left off at {pnl_checkpoint} index")
 
+                print("Starting to write into [securities]. ~200k rows")
                 for index, row in securities.iterrows():
                     if SECURITY_WRITE_ENABLE and index > securities_checkpoint:
+                        print(" ✅ Wrote into[securities] | Index: " + str(index))
                         write_row_to_securities(cursor, to_security(row))
                         connection.commit()
                         f.seek(0)
                         f.write(f"{index} {positions_checkpoint} {pnl_checkpoint}")
                         f.truncate()
+                print("[Securities] write done.")
                 for index, row in positions.iterrows():
                     if POSITIONS_WRITE_ENABLE and index > positions_checkpoint:
+                        print("Starting to write into [Positions]. ~2M")
                         write_row_to_positions(cursor, to_position(row))
                         connection.commit()
                         f.seek(0)
                         f.write(f"{index} {positions_checkpoint} {pnl_checkpoint}")
                         f.truncate()
+                print("[Positions] write done.")
+                
                 for index, row in pnl.iterrows():
                     if PNL_WRITE_ENABLE and index > pnl_checkpoint:
+                        print("Starting to write into [PnL]. ~1B")
                         write_row_to_pnl(cursor, to_pnl(row))
                         connection.commit()
                         f.seek(0)

@@ -47,7 +47,7 @@ def create_securities_table(cursor: Cursor):
     """
     cursor.execute(
         """
-                    create table if not exists securities(
+                    create table if not exists securitieswz (
                         securityid varchar primary key,
                         assetclass varchar,
                         securitytype varchar,
@@ -74,7 +74,7 @@ def create_positions_table(cursor: Cursor):
     """
     cursor.execute(
         """
-                    create table if not exists positions(
+                    create table if not exists positionswz(
                         securityid varchar primary key,
                         trader varchar,
                         microstrategy varchar,
@@ -93,7 +93,7 @@ def create_pnl_table(cursor: Cursor):
     """
     cursor.execute(
         """
-                    create table if not exists pnl(
+                    create table if not exists pnlwz(
                         securityid varchar primary key,
                         date varchar,
                         pnl int
@@ -108,7 +108,7 @@ def write_row_to_securities(cursor: Cursor, security: Security):
     """
     cursor.execute(
         """
-                    insert into securities (
+                    insert into securitieswz (
                         securityid,
                         assetclass,
                         securitytype,
@@ -168,7 +168,7 @@ def write_row_to_positions(cursor: Cursor, position: Position):
     """
     cursor.execute(
         """
-                    insert into position (
+                    insert into positionwz (
                         securityid,
                         trader,
                         microstrategy,
@@ -204,7 +204,7 @@ def write_row_to_pnl(cursor: Cursor, pnl: PnL):
     """
     cursor.execute(
         """
-                    insert into pnl (
+                    insert into pnlwz (
                         securityid,
                         date,
                         pnl
@@ -227,7 +227,7 @@ def to_security(security_row: pd.Series):
     Convert Series row from securities table to Security obj
     """
     # First element in Series.values is index
-    return Security(*security_row.values[1:])
+    return Security(*security_row.values[:])
 
 
 def to_position(position_row: pd.Series):
@@ -235,7 +235,7 @@ def to_position(position_row: pd.Series):
     Convert Series row from positions table to Position obj
     """
     # First element in Series.values is index
-    return Position(*position_row.values[1:])
+    return Position(*position_row.values[:])
 
 
 def to_pnl(pnl_row: pd.Series):
@@ -243,20 +243,20 @@ def to_pnl(pnl_row: pd.Series):
     Convert Series row from pnl table to PnL obj
     """
     # First element in Series.values is index
-    return Position(*pnl_row.values[1:])
+    return Position(*pnl_row.values[:])
 
 
 if PNL_WRITE_ENABLE:
-    pnl = pd.read_csv("./pnl.csv")
+    pnl = pd.read_csv("../data/pnl.csv")
 else:
     pnl = None
 
 if POSITIONS_WRITE_ENABLE:
-    positions = pd.read_csv("./positions.csv")
+    positions = pd.read_csv("../data/positions.csv")
 else:
     positions = None
 
 if SECURITY_WRITE_ENABLE:
-    securities = pd.read_csv("./securities.csv")
+    securities = pd.read_csv("../data/securities.csv")
 else:
     securities = None

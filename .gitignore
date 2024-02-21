@@ -1,2 +1,11 @@
 *.csv
 .env
+
+__pycache__
+bin
+include
+lib
+
+checkpoint.txt
+*.txt
+*.cfg
