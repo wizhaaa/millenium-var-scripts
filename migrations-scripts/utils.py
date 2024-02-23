@@ -74,8 +74,8 @@ def create_positions_table(cursor: Cursor):
     """
     cursor.execute(
         """
-                    create table if not exists positionswz(
-                        securityid varchar primary key,
+                    create table if not exists positionswz (
+                        securityid varchar,
                         trader varchar,
                         microstrategy varchar,
                         pod varchar,
@@ -94,7 +94,7 @@ def create_pnl_table(cursor: Cursor):
     cursor.execute(
         """
                     create table if not exists pnlwz(
-                        securityid varchar primary key,
+                        securityid varchar,
                         date varchar,
                         pnl int
                     );
@@ -168,7 +168,7 @@ def write_row_to_positions(cursor: Cursor, position: Position):
     """
     cursor.execute(
         """
-                    insert into positionwz (
+                    insert into positionswz (
                         securityid,
                         trader,
                         microstrategy,
@@ -183,7 +183,7 @@ def write_row_to_positions(cursor: Cursor, position: Position):
                         %s,
                         %s,
                         %s,
-                        %s,
+                        %s
                     )
                    """,
         (
@@ -243,11 +243,12 @@ def to_pnl(pnl_row: pd.Series):
     Convert Series row from pnl table to PnL obj
     """
     # First element in Series.values is index
-    return Position(*pnl_row.values[:])
+    return PnL(*pnl_row.values[:])
 
 
 if PNL_WRITE_ENABLE:
-    pnl = pd.read_csv("../data/pnl.csv")
+    chunksize = 10 ** 5
+    pnl = pd.read_csv("../simulated_pnl.csv", chunksize=chunksize)
 else:
     pnl = None
 
